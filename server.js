@@ -1,7 +1,7 @@
 'use strict';
 require('dotenv').config();
 const express = require('express');
-const myDB = require('./connection');
+const myDB = require('./connection.js');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 const session = require('express-session');
 const passport = require('passport');
@@ -13,9 +13,9 @@ const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const passportSocketIo = require('passport.socketio');
 const cookieParser = require('cookie-parser');
-const MongoStore = require('connect-mongodb-session')(session);
+const MongoDBStore = require('connect-mongodb-session')(session);
 const URI = process.env.MONGO_URI;
-const store = new MongoStore({ url: URI });
+const store = new MongoDBStore({ uri:URI });
 
 app.set('view engine', 'pug');
 
@@ -57,7 +57,7 @@ myDB(async (client) => {
   io.on('connection', (socket) => {
     ++currentUsers;
     io.emit('user', {
-      name: socket.request.user.name,
+      name: socket.request.username,
       currentUsers,
       connected: true
     });
